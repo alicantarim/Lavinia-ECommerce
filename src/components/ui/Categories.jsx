@@ -1,32 +1,32 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Categories = () => {
   const categories = [
     {
       id: 1,
-      title: 'Unique Life',
-      subtitle: 'Your Space',
-      image: 'https://picsum.photos/400/300?random=1',
-      link: '/',
-      buttonText: 'Explore Items'
+      title: "Unique Life",
+      subtitle: "Your Space",
+      image: "https://picsum.photos/400/300?random=1",
+      link: "/",
+      buttonText: "Explore Items",
     },
     {
       id: 2,
-      title: 'Elements Style',
-      subtitle: 'Ends Today',
-      image: 'https://picsum.photos/400/300?random=2',
-      link: '/',
-      buttonText: 'Explore Items'
+      title: "Elements Style",
+      subtitle: "Ends Today",
+      image: "https://picsum.photos/400/300?random=2",
+      link: "/",
+      buttonText: "Explore Items",
     },
     {
       id: 3,
-      title: 'Elements Style',
-      subtitle: 'Ends Today',
-      image: 'https://picsum.photos/400/300?random=3',
-      link: '/',
-      buttonText: 'Explore Items'
-    }
+      title: "Elements Style",
+      subtitle: "Ends Today",
+      image: "https://picsum.photos/400/300?random=3",
+      link: "/",
+      buttonText: "Explore Items",
+    },
   ];
 
   return (
@@ -43,7 +43,9 @@ const Categories = () => {
             </div>
             <div className="absolute inset-0 flex flex-col justify-center p-6 bg-gradient-to-t from-black/50 to-transparent">
               <span className="text-white text-sm">{category.subtitle}</span>
-              <h3 className="text-white text-2xl font-bold mt-2">{category.title}</h3>
+              <h3 className="text-white text-2xl font-bold mt-2">
+                {category.title}
+              </h3>
               <Link
                 to={category.link}
                 className="text-white text-sm mt-4 hover:underline"

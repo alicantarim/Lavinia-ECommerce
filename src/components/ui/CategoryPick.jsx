@@ -1,32 +1,32 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const CategoryPick = () => {
   const categories = [
     {
       id: 1,
-      name: 'Ice Cream',
-      image: '/images/categories/ice-cream.png',
-      count: '12 Products'
+      name: "Ice Cream",
+      image: "/images/categories/ice-cream.png",
+      count: "12 Products",
     },
     {
       id: 2,
-      name: 'Fresh Fruits',
-      image: '/images/categories/fruits.png',
-      count: '15 Products'
+      name: "Fresh Fruits",
+      image: "/images/categories/fruits.png",
+      count: "15 Products",
     },
     {
       id: 3,
-      name: 'Fresh Meat',
-      image: '/images/categories/meat.png',
-      count: '8 Products'
+      name: "Fresh Meat",
+      image: "/images/categories/meat.png",
+      count: "8 Products",
     },
     {
       id: 4,
-      name: 'Snacks',
-      image: '/images/categories/snacks.png',
-      count: '24 Products'
-    }
+      name: "Snacks",
+      image: "/images/categories/snacks.png",
+      count: "24 Products",
+    },
   ];
 
   return (
