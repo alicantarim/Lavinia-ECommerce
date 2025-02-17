@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useCallback, memo } from "react";
+import { Link, useHistory } from "react-router-dom";
+import useAuthStore from "../store/authStore";
 import {
   Search,
   ShoppingCart,
@@ -9,18 +10,40 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
+import { getGravatarUrl } from "../utils/gravatar";
 
-const Header = () => {
+const shopCategories = {
+  women: ["Bags", "Belts", "Cosmetics", "Bags", "Hats"],
+  men: ["Bags", "Belts", "Cosmetics", "Bags", "Hats"],
+};
+
+const Header = memo(() => {
+  const { user, logout } = useAuthStore();
+  const history = useHistory();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
+  const timeoutRef = useRef(null);
 
-  const shopCategories = {
-    women: ["Bags", "Belts", "Cosmetics", "Bags", "Hats"],
-    men: ["Bags", "Belts", "Cosmetics", "Bags", "Hats"],
-  };
+  const handleMouseEnter = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsShopDropdownOpen(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    timeoutRef.current = setTimeout(() => {
+      setIsShopDropdownOpen(false);
+    }, 100);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    logout();
+    history.push("/");
+  }, [logout, history]);
 
   return (
-    <header className="bg-white">
+    <header className="bg-white shadow-sm">
       {/* Top Bar */}
       <div className="bg-gray-100">
         <div className="max-w-7xl mx-auto px-4">
@@ -32,7 +55,7 @@ const Header = () => {
               </div>
               <div className="flex items-center">
                 <Mail className="w-4 h-4 mr-2" />
-                <span>info@quantumcode.co</span>
+                <span>michelle.rivera@example.com</span>
               </div>
             </div>
             <div className="hidden md:block">
@@ -66,12 +89,12 @@ const Header = () => {
       </div>
 
       {/* Main Header */}
-      <div className="border-b">
+      <div>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="text-2xl font-bold">
-              Lavinia E-Shop
+              E-Commerce
             </Link>
 
             {/* Desktop Navigation */}
@@ -80,20 +103,21 @@ const Header = () => {
                 Home
               </Link>
               <div className="relative">
-                <button
-                  className="text-gray-600 hover:text-blue-600"
-                  onMouseEnter={() => setIsShopDropdownOpen(true)}
-                  onMouseLeave={() => setIsShopDropdownOpen(false)}
+                <Link
+                  to="/shop"
+                  className="text-gray-600 cursor-pointer hover:text-blue-600"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
                 >
                   Shop
-                </button>
+                </Link>
                 {isShopDropdownOpen && (
                   <div
-                    className="absolute top-full left-0 mt-2 w-96 bg-white shadow-lg rounded-md py-2 z-50"
-                    onMouseEnter={() => setIsShopDropdownOpen(true)}
-                    onMouseLeave={() => setIsShopDropdownOpen(false)}
+                    className="absolute top-full left-0 mt-2 w-96 bg-white shadow-lg rounded-md py-2 pl-4 z-50"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
                   >
-                    <div className="grid grid-cols-2 gap-4 p-4">
+                    <div className="grid grid-cols-2 gap-8 p-4">
                       <div>
                         <h3 className="font-semibold text-lg mb-2">Kadın</h3>
                         <ul className="space-y-2">
@@ -128,46 +152,70 @@ const Header = () => {
                   </div>
                 )}
               </div>
-              <Link to="/" className="text-gray-600 hover:text-blue-600">
+              <Link to="/about" className="text-gray-600 hover:text-blue-600">
                 About
               </Link>
-              <Link to="/" className="text-gray-600 hover:text-blue-600">
-                Blog
+              <Link to="/team" className="text-gray-600 hover:text-blue-600">
+                Team
               </Link>
-              <Link to="/" className="text-gray-600 hover:text-blue-600">
+              <Link to="/contact" className="text-gray-600 hover:text-blue-600">
                 Contact
               </Link>
             </nav>
 
             {/* Right Side */}
             <div className="flex items-center space-x-6">
-              <Link
-                to="/"
-                className="hidden md:flex items-center text-blue-600 hover:text-blue-700"
-              >
-                <span className="mr-1">Login</span>
-                <span className="text-gray-400">/</span>
-                <span className="ml-1">Register</span>
-              </Link>
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={getGravatarUrl(user.email)}
+                    alt={user.name}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <span className="text-gray-700">{user.name}</span>
+                  <button
+                    onClick={handleLogout}
+                    className="text-blue-600 cursor-pointer hover:text-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="hidden md:flex items-center">
+                  <Link
+                    to="/login"
+                    className="text-blue-600 hover:text-blue-700"
+                  >
+                    Login
+                  </Link>
+                  <span className="mx-2 text-gray-400">/</span>
+                  <Link
+                    to="/signup"
+                    className="text-blue-600 hover:text-blue-700"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
               <button className="text-gray-600 hover:text-blue-600">
                 <Search className="w-5 h-5" />
               </button>
               <Link
-                to="/"
+                to="/cart"
                 className="text-gray-600 hover:text-blue-600 relative"
               >
                 <ShoppingCart className="w-5 h-5" />
                 <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                  1
+                  0
                 </span>
               </Link>
               <Link
-                to="/"
+                to="/wishlist"
                 className="text-gray-600 hover:text-blue-600 relative"
               >
                 <Heart className="w-5 h-5" />
                 <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                  1
+                  0
                 </span>
               </Link>
               <button
@@ -196,25 +244,25 @@ const Header = () => {
               Home
             </Link>
             <Link
-              to="/"
+              to="/shop"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
             >
               Shop
             </Link>
             <Link
-              to="/"
+              to="/about"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
             >
               About
             </Link>
             <Link
-              to="/"
+              to="/team"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
             >
-              Blog
+              Team
             </Link>
             <Link
-              to="/"
+              to="/contact"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
             >
               Contact
@@ -224,6 +272,6 @@ const Header = () => {
       )}
     </header>
   );
-};
+});
 
 export default Header;
